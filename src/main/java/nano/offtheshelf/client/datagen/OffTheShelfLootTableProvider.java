@@ -16,5 +16,6 @@ public class OffTheShelfLootTableProvider extends FabricBlockLootSubProvider {
     public void generate() {
         OffTheShelf.BOOKCASES.forEach(block -> this.dropSelf(block));
         OffTheShelf.TIERED_SHELVING.forEach(block -> this.dropSelf(block));
+        OffTheShelf.WALL_SHELVING.forEach(block -> this.dropSelf(block));
     }
 }

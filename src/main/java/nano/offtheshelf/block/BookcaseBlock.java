@@ -45,6 +45,8 @@ public class BookcaseBlock extends ModularShelfBlock {
 
     public BookcaseBlock(final BlockBehaviour.Properties properties) {
         super(properties);
+        BlockState defaultState = this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MODEL, 0);
+        this.registerDefaultState(defaultState);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class BookcaseBlock extends ModularShelfBlock {
     }
 
     @Override
-    public VoxelShape getDirectionVoxelShape(Direction direction) {
+    public VoxelShape getDirectionVoxelShape(BlockState state, Direction direction) {
         return SHAPES.get(direction);
     }
 

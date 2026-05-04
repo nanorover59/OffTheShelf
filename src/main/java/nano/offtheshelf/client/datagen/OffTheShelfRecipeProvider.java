@@ -49,7 +49,6 @@ public class OffTheShelfRecipeProvider extends FabricRecipeProvider {
         INGREDIENTS.put(Blocks.POLISHED_BLACKSTONE_BRICKS, new Tuple<>(Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.POLISHED_BLACKSTONE_BRICK_SLAB));
         INGREDIENTS.put(Blocks.END_STONE_BRICKS, new Tuple<>(Blocks.END_STONE_BRICKS, Blocks.END_STONE_BRICK_SLAB));
         INGREDIENTS.put(Blocks.PURPUR_BLOCK, new Tuple<>(Blocks.PURPUR_BLOCK, Blocks.PURPUR_SLAB));
-        INGREDIENTS.put(Blocks.QUARTZ_BLOCK, new Tuple<>(Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_SLAB));
         // Metal Types
         INGREDIENTS.put(Blocks.CUT_COPPER, new Tuple<>(Blocks.CUT_COPPER, Blocks.CUT_COPPER_SLAB));
         INGREDIENTS.put(Blocks.IRON_BLOCK, new Tuple<>(Items.IRON_INGOT, Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE));
@@ -95,6 +94,20 @@ public class OffTheShelfRecipeProvider extends FabricRecipeProvider {
                                 .pattern("aaa")
                                 .define('a', ingredients.getB())
                                 .group("tiered_shelf")
+                                .unlockedBy(getHasName(baseBlock), has(baseBlock))
+                                .save(output);
+                    }
+                });
+
+                OffTheShelf.WALL_SHELVING.forEach(block -> {
+                    Block baseBlock = OffTheShelf.BASE_BLOCKS.get(block);
+
+                    if(INGREDIENTS.containsKey(baseBlock)) {
+                        Tuple<ItemLike, ItemLike> ingredients = INGREDIENTS.get(baseBlock);
+                        shaped(RecipeCategory.DECORATIONS, block, 3)
+                                .pattern("aaa")
+                                .define('a', ingredients.getB())
+                                .group("wall_shelf")
                                 .unlockedBy(getHasName(baseBlock), has(baseBlock))
                                 .save(output);
                     }

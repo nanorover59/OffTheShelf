@@ -2,6 +2,8 @@ package nano.offtheshelf.block.entity;
 
 import nano.offtheshelf.OffTheShelf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BookcaseBlockEntity extends OffTheShelfBlockEntity  {
@@ -17,5 +19,10 @@ public class BookcaseBlockEntity extends OffTheShelfBlockEntity  {
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    @Override
+    public boolean acceptsItemType(final ItemStack itemStack) {
+        return itemStack.is(ItemTags.BOOKSHELF_BOOKS);
     }
 }

@@ -1,6 +1,0 @@
-{
-  "parent": "offtheshelf:block/bookcase_right",
-  "textures": {
-    "all": "minecraft:block/quartz_block"
-  }
-}

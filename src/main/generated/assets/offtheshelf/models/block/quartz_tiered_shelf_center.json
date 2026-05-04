@@ -1,6 +1,0 @@
-{
-  "parent": "offtheshelf:block/tiered_shelf_center",
-  "textures": {
-    "all": "minecraft:block/quartz_block"
-  }
-}

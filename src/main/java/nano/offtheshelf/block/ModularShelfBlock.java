@@ -18,9 +18,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -46,15 +43,13 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
 
     public ModularShelfBlock(final BlockBehaviour.Properties properties) {
         super(properties);
-        BlockState defaultState = this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MODEL, 0);
-        this.registerDefaultState(defaultState);
     }
 
-    public abstract VoxelShape getDirectionVoxelShape(Direction direction);
+    public abstract VoxelShape getDirectionVoxelShape(BlockState state, Direction direction);
 
     @Override
     protected VoxelShape getShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext context) {
-        return this.getDirectionVoxelShape(state.getValue(FACING));
+        return this.getDirectionVoxelShape(state, state.getValue(FACING));
     }
 
     @Override
@@ -79,7 +74,7 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
             ItemStack previousStack = blockEntity.getItem(slot);
             boolean same = ItemStack.isSameItem(stack, previousStack) && ItemStack.isSameItemSameComponents(stack, previousStack);
 
-            if((!previousStack.isEmpty() && !same) || blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE)
+            if((!blockEntity.canPlaceItem(slot, stack) && !same) || blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE)
                 return InteractionResult.TRY_WITH_EMPTY_HAND;
 
             if(!level.isClientSide()) {
@@ -178,6 +173,9 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
     }
 
     private void updateConnection(Level level, BlockState state, BlockPos pos) {
+        if(!state.hasProperty(MODEL))
+            return;
+
         Direction direction = state.getValue(FACING);
         BlockPos leftPos = switch (direction) {
             case NORTH -> pos.west();

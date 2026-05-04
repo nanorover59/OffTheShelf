@@ -17,6 +17,7 @@ public class OffTheShelfEnglishLanguageProvider extends FabricLanguageProvider {
     public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
         OffTheShelf.BOOKCASES.forEach(block -> translationBuilder.add(block, this.convertID(BuiltInRegistries.BLOCK.getKey(block).getPath())));
         OffTheShelf.TIERED_SHELVING.forEach(block -> translationBuilder.add(block, this.convertID(BuiltInRegistries.BLOCK.getKey(block).getPath())));
+        OffTheShelf.WALL_SHELVING.forEach(block -> translationBuilder.add(block, this.convertID(BuiltInRegistries.BLOCK.getKey(block).getPath())));
         translationBuilder.add("creativeTab.offtheshelf", "Off The Shelf");
         translationBuilder.add("commands.shelf.mode", "Set %d shelves to %s");
     }

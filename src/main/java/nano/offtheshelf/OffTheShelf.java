@@ -2,14 +2,15 @@ package nano.offtheshelf;
 
 import nano.offtheshelf.block.BookcaseBlock;
 import nano.offtheshelf.block.TieredShelfBlock;
+import nano.offtheshelf.block.WallShelfBlock;
 import nano.offtheshelf.block.entity.BookcaseBlockEntity;
 import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
 import nano.offtheshelf.block.entity.TieredShelfBlockEntity;
+import nano.offtheshelf.block.entity.WallShelfBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Registry;
@@ -19,9 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,10 +37,12 @@ public class OffTheShelf implements ModInitializer {
 
     public static ArrayList<Block> BOOKCASES = new ArrayList<>();
     public static ArrayList<Block> TIERED_SHELVING = new ArrayList<>();
+    public static ArrayList<Block> WALL_SHELVING = new ArrayList<>();
     public static HashMap<Block, Block> BASE_BLOCKS = new HashMap<>();
 
     public static BlockEntityType<BookcaseBlockEntity> BOOKCASE_BLOCK_ENTITY;
     public static BlockEntityType<TieredShelfBlockEntity> TIERED_SHELF_BLOCK_ENTITY;
+    public static BlockEntityType<WallShelfBlockEntity> WALL_SHELF_BLOCK_ENTITY;
 
     public static CreativeModeTab CREATIVE_TAB = registerCreativeTab("offtheshelf");
 
@@ -75,7 +76,6 @@ public class OffTheShelf implements ModInitializer {
         registerShelving("polished_blackstone_brick", Blocks.POLISHED_BLACKSTONE_BRICKS);
         registerShelving("end_stone_brick", Blocks.END_STONE_BRICKS);
         registerShelving("purpur", Blocks.PURPUR_BLOCK);
-        registerShelving("quartz", Blocks.QUARTZ_BLOCK);
         // Metal Types
         registerShelving("copper", Blocks.CUT_COPPER);
         registerShelving("iron", Blocks.IRON_BLOCK);
@@ -83,6 +83,7 @@ public class OffTheShelf implements ModInitializer {
 
         BOOKCASE_BLOCK_ENTITY = registerBlockEntity("bookcase", BookcaseBlockEntity::new, BOOKCASES.toArray(new Block[0]));
         TIERED_SHELF_BLOCK_ENTITY = registerBlockEntity("tiered_shelf", TieredShelfBlockEntity::new, TIERED_SHELVING.toArray(new Block[0]));
+        WALL_SHELF_BLOCK_ENTITY = registerBlockEntity("wall_shelf", WallShelfBlockEntity::new, WALL_SHELVING.toArray(new Block[0]));
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) ->
                 dispatcher.register(Commands.literal("shelf").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -100,13 +101,13 @@ public class OffTheShelf implements ModInitializer {
     private static void registerShelving(String name, Block baseBlock) {
         registerBookcase(name, baseBlock);
         registerTieredShelf(name, baseBlock);
+        registerWallShelf(name, baseBlock);
     }
 
     private static Block registerBookcase(String name, Block baseBlock) {
         Block bookcase = registerBlock(name + "_bookcase", BookcaseBlock::new, BlockBehaviour.Properties.ofFullCopy(baseBlock));
         BOOKCASES.add(bookcase);
         BASE_BLOCKS.put(bookcase, baseBlock);
-
         return bookcase;
     }
 
@@ -115,6 +116,13 @@ public class OffTheShelf implements ModInitializer {
         TIERED_SHELVING.add(tieredShelf);
         BASE_BLOCKS.put(tieredShelf, baseBlock);
         return tieredShelf;
+    }
+
+    private static Block registerWallShelf(String name, Block baseBlock) {
+        Block wallShelf = registerBlock(name + "_wall_shelf", WallShelfBlock::new, BlockBehaviour.Properties.ofFullCopy(baseBlock).isViewBlocking(Blocks::never).noOcclusion());
+        WALL_SHELVING.add(wallShelf);
+        BASE_BLOCKS.put(wallShelf, baseBlock);
+        return wallShelf;
     }
 
     private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties settings, TagKey<Block>... tagKeys) {
@@ -142,6 +150,7 @@ public class OffTheShelf implements ModInitializer {
                 .displayItems((_, output) -> {
                     BOOKCASES.forEach(block -> output.accept(block.asItem()));
                     TIERED_SHELVING.forEach(block -> output.accept(block.asItem()));
+                    WALL_SHELVING.forEach(block -> output.accept(block.asItem()));
                 });
         CreativeModeTab creativeTab = builder.build();
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, creativeTabKey, creativeTab);

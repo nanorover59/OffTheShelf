@@ -1,8 +1,8 @@
 package nano.offtheshelf.client.datagen;
 
 import nano.offtheshelf.OffTheShelf;
-import nano.offtheshelf.block.BookcaseBlock;
 import nano.offtheshelf.block.ModularShelfBlock;
+import nano.offtheshelf.block.WallShelfBlock;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -19,7 +19,6 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.Optional;
 
@@ -35,6 +34,9 @@ public class OffTheShelfModelProvider extends FabricModelProvider {
     public static ModelTemplate TIERED_SHELF_LEFT = blockTemplate("tiered_shelf_left", TextureSlot.ALL);
     public static ModelTemplate TIERED_SHELF_RIGHT = blockTemplate("tiered_shelf_right", TextureSlot.ALL);
 
+    public static ModelTemplate WALL_SHELF = blockTemplate("wall_shelf", TextureSlot.ALL);
+    public static ModelTemplate WALL_SHELF_BOTTOM = blockTemplate("wall_shelf_bottom", TextureSlot.ALL);
+
     public OffTheShelfModelProvider(FabricPackOutput output) {
         super(output);
     }
@@ -48,6 +50,7 @@ public class OffTheShelfModelProvider extends FabricModelProvider {
     public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
         OffTheShelf.BOOKCASES.forEach(block -> this.registerBookcase(blockStateModelGenerator, block, this.blockAll(OffTheShelf.BASE_BLOCKS.get(block))));
         OffTheShelf.TIERED_SHELVING.forEach(block -> this.registerTieredShelf(blockStateModelGenerator, block, this.blockAll(OffTheShelf.BASE_BLOCKS.get(block))));
+        OffTheShelf.WALL_SHELVING.forEach(block -> this.registerWallShelf(blockStateModelGenerator, block, this.blockAll(OffTheShelf.BASE_BLOCKS.get(block))));
     }
 
     @Override
@@ -69,6 +72,13 @@ public class OffTheShelfModelProvider extends FabricModelProvider {
         Identifier modelLeft = TIERED_SHELF_LEFT.createWithSuffix(block, "_left", textures, generator.modelOutput);
         Identifier modelRight = TIERED_SHELF_RIGHT.createWithSuffix(block, "_right", textures, generator.modelOutput);
         generator.blockStateOutput.accept(createModularShelfStates(block, model, modelCenter, modelLeft, modelRight));
+        generator.registerSimpleItemModel(block, model);
+    }
+
+    public static void registerWallShelf(BlockModelGenerators generator, Block block, TextureMapping textures) {
+        Identifier model = WALL_SHELF.create(block, textures, generator.modelOutput);
+        Identifier modelBottom = WALL_SHELF_BOTTOM.createWithSuffix(block, "_bottom", textures, generator.modelOutput);
+        generator.blockStateOutput.accept(createWallShelfStates(block, model, modelBottom));
         generator.registerSimpleItemModel(block, model);
     }
 
@@ -95,6 +105,22 @@ public class OffTheShelfModelProvider extends FabricModelProvider {
                         .select(Direction.EAST, ModularShelfBlock.RIGHT, modelRight.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_90))
                         .select(Direction.SOUTH, ModularShelfBlock.RIGHT, modelRight.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_180))
                         .select(Direction.WEST, ModularShelfBlock.RIGHT, modelRight.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_270))
+                );
+    }
+
+    public static BlockModelDefinitionGenerator createWallShelfStates(Block block, Identifier center, Identifier bottom) {
+        MultiVariant model = BlockModelGenerators.plainVariant(center);
+        MultiVariant modelBottom = BlockModelGenerators.plainVariant(bottom);
+        return MultiVariantGenerator.dispatch(block)
+                .with(PropertyDispatch.initial(ModularShelfBlock.FACING, WallShelfBlock.BOTTOM)
+                        .select(Direction.NORTH, false, model.with(BlockModelGenerators.UV_LOCK))
+                        .select(Direction.EAST, false, model.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Direction.SOUTH, false, model.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Direction.WEST, false, model.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_270))
+                        .select(Direction.NORTH, true, modelBottom.with(BlockModelGenerators.UV_LOCK))
+                        .select(Direction.EAST, true, modelBottom.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_90))
+                        .select(Direction.SOUTH, true, modelBottom.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_180))
+                        .select(Direction.WEST, true, modelBottom.with(BlockModelGenerators.UV_LOCK).with(BlockModelGenerators.Y_ROT_270))
                 );
     }
 

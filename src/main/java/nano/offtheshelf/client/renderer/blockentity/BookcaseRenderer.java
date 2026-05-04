@@ -27,17 +27,21 @@ import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity, BookcaseRenderState> {
-    public static final SpriteId BOOK_TEXTURE = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book"));
+    public static final SpriteId BOOK_TEXTURE_0 = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book0"));
+    public static final SpriteId BOOK_TEXTURE_1 = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book1"));
+    public static final SpriteId BOOK_TEXTURE_2 = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book2"));
+    public static final SpriteId BOOK_TEXTURE_3 = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book3"));
     private final SpriteGetter sprites;
     private final Font font;
     private final ModelPart book;
@@ -60,11 +64,16 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
         state.model = blockEntity.getBlockState().getValue(BookcaseBlock.MODEL);
         NonNullList<ItemStack> items = blockEntity.getItems();
         Minecraft client = Minecraft.getInstance();
+        RandomSource random = new LegacyRandomSource(blockEntity.getBlockPos().asLong());
+        int[] variant = new int[16];
+
+        for(int i = 0; i < 16; i++)
+            variant[i] = random.nextInt(5);
 
         if(client.hitResult != null && client.hitResult instanceof BlockHitResult) {
             BlockHitResult blockHitResult = (BlockHitResult) client.hitResult;
 
-            if (blockHitResult.getBlockPos().equals(blockEntity.getBlockPos()))
+            if(blockHitResult.getBlockPos().equals(blockEntity.getBlockPos()) && blockEntity.getMode() != OffTheShelfBlockEntity.LOCKED)
                 state.highlight = ((ModularShelfBlock) blockEntity.getBlockState().getBlock()).getInteractionSlot(blockEntity.getBlockState(), blockHitResult);
         }
 
@@ -75,10 +84,10 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
             ItemStack itemStack = items.get(i);
 
             if(!itemStack.isEmpty()) {
-                BookRenderState itemStackRenderState = new BookRenderState();
-                itemStackRenderState.bookType = 1;
-                itemStackRenderState.bookColor = DyedItemColor.getOrDefault(itemStack, -6265536);
-                state.books[i] = itemStackRenderState;
+                BookRenderState bookRenderState = new BookRenderState();
+                bookRenderState.bookType = variant[i];
+                bookRenderState.bookColor = DyedItemColor.getOrDefault(itemStack, -6265536);
+                state.books[i] = bookRenderState;
 
                 if(state.highlight == i)
                     state.name = itemStack.getStyledHoverName();
@@ -97,7 +106,6 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
             if(state.books[i] == null)
                 continue;
 
-
             double x = (double) ((i / 2) + 1) * 0.125 + 0.0625;
             double y = (double) (1 - i % 2) * 0.5 + 0.0625;
             double z = 0.4375;
@@ -115,6 +123,7 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
                 default -> Vec3.ZERO;
             };
 
+            SpriteId texture = this.getTextureLocation(state.books[i].bookType);
             int color = state.books[i].bookColor;
 
             if(state.highlight == i)
@@ -126,10 +135,10 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
             queue.submitModelPart(
                     this.book,
                     matrices,
-                    BOOK_TEXTURE.renderType(RenderTypes::entitySolid),
+                    texture.renderType(RenderTypes::entitySolid),
                     state.lightCoords,
                     OverlayTexture.NO_OVERLAY,
-                    this.sprites.get(BOOK_TEXTURE),
+                    this.sprites.get(texture),
                     color,
                     state.breakProgress
             );
@@ -155,6 +164,15 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
 
             matrices.popPose();
         }
+    }
+
+    public SpriteId getTextureLocation(int type) {
+        return switch(type) {
+            case 1 -> BOOK_TEXTURE_1;
+            case 2 -> BOOK_TEXTURE_2;
+            case 3 -> BOOK_TEXTURE_3;
+            default -> BOOK_TEXTURE_0;
+        };
     }
 
     public static LayerDefinition getTexturedModelData() {
