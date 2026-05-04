@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "tiered_shelf",
+  "key": {
+    "a": "minecraft:cut_copper_slab"
+  },
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:copper_tiered_shelf"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "variants": {
+    "facing=east,model=0": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,model=1": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_center",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,model=2": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_left",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=east,model=3": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_right",
+      "uvlock": true,
+      "y": 90
+    },
+    "facing=north,model=0": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf",
+      "uvlock": true
+    },
+    "facing=north,model=1": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_center",
+      "uvlock": true
+    },
+    "facing=north,model=2": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_left",
+      "uvlock": true
+    },
+    "facing=north,model=3": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_right",
+      "uvlock": true
+    },
+    "facing=south,model=0": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,model=1": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_center",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,model=2": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_left",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=south,model=3": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_right",
+      "uvlock": true,
+      "y": 180
+    },
+    "facing=west,model=0": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,model=1": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_center",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,model=2": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_left",
+      "uvlock": true,
+      "y": 270
+    },
+    "facing=west,model=3": {
+      "model": "offtheshelf:block/mangrove_tiered_shelf_right",
+      "uvlock": true,
+      "y": 270
+    }
+  }
+}

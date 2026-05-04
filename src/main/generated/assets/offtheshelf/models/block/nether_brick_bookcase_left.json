@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/bookcase_left",
+  "textures": {
+    "all": "minecraft:block/nether_bricks"
+  }
+}

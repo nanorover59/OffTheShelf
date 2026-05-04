@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/tiered_shelf_center",
+  "textures": {
+    "all": "minecraft:block/polished_deepslate"
+  }
+}

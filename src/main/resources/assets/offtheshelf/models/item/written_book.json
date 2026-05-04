@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "offtheshelf:item/written_book",
+    "layer1": "offtheshelf:item/book_overlay"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "tiered_shelf",
+  "key": {
+    "a": "minecraft:heavy_weighted_pressure_plate"
+  },
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:gold_tiered_shelf"
+  }
+}

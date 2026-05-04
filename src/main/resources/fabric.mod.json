@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "offtheshelf",
+  "version": "${version}",
+  "name": "OffTheShelf",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/offtheshelf/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "nano.offtheshelf.client.datagen.OffTheShelfDataGenerator"
+    ],
+    "client": [
+      "nano.offtheshelf.client.OffTheShelfClient"
+    ],
+    "main": [
+      "nano.offtheshelf.OffTheShelf"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

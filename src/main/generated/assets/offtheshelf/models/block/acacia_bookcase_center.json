@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/bookcase_center",
+  "textures": {
+    "all": "minecraft:block/acacia_planks"
+  }
+}

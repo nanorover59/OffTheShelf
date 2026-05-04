@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bookcase",
+  "key": {
+    "a": "minecraft:deepslate_bricks",
+    "b": "minecraft:deepslate_brick_slab"
+  },
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:deepslate_brick_bookcase"
+  }
+}

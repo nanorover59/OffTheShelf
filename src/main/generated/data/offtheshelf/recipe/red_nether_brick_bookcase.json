@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bookcase",
+  "key": {
+    "a": "minecraft:red_nether_bricks",
+    "b": "minecraft:red_nether_brick_slab"
+  },
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:red_nether_brick_bookcase"
+  }
+}

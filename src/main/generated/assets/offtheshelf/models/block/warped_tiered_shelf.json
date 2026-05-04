@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/tiered_shelf",
+  "textures": {
+    "all": "minecraft:block/warped_planks"
+  }
+}

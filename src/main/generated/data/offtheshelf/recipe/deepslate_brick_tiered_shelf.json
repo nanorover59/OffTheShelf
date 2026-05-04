@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "tiered_shelf",
+  "key": {
+    "a": "minecraft:deepslate_brick_slab"
+  },
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:deepslate_brick_tiered_shelf"
+  }
+}

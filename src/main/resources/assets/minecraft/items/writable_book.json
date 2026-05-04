@@ -1,0 +1,21 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:has_component",
+    "component": "minecraft:dyed_color",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "offtheshelf:item/writable_book",
+      "tints": [
+        {
+          "type": "minecraft:dye",
+          "default": -6265536
+        }
+      ]
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/writable_book"
+    }
+  }
+}

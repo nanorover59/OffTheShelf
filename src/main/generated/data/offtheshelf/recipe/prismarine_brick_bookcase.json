@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bookcase",
+  "key": {
+    "a": "minecraft:prismarine_bricks",
+    "b": "minecraft:prismarine_brick_slab"
+  },
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:prismarine_brick_bookcase"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "tiered_shelf",
+  "key": {
+    "a": "minecraft:polished_diorite_slab"
+  },
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:polished_diorite_tiered_shelf"
+  }
+}

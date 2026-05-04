@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/bookcase_right",
+  "textures": {
+    "all": "minecraft:block/pale_oak_planks"
+  }
+}

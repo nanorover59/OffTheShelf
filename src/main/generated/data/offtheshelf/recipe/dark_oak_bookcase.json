@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bookcase",
+  "key": {
+    "a": "minecraft:dark_oak_planks",
+    "b": "minecraft:dark_oak_slab"
+  },
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:dark_oak_bookcase"
+  }
+}

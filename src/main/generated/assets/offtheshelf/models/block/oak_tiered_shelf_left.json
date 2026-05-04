@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/tiered_shelf_left",
+  "textures": {
+    "all": "minecraft:block/oak_planks"
+  }
+}

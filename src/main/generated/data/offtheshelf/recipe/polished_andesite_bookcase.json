@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "bookcase",
+  "key": {
+    "a": "minecraft:polished_andesite",
+    "b": "minecraft:polished_andesite_slab"
+  },
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "result": {
+    "count": 3,
+    "id": "offtheshelf:polished_andesite_bookcase"
+  }
+}

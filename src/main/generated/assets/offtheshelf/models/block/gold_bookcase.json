@@ -1,0 +1,6 @@
+{
+  "parent": "offtheshelf:block/bookcase",
+  "textures": {
+    "all": "minecraft:block/gold_block"
+  }
+}
