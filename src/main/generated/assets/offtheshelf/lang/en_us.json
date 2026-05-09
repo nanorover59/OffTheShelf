@@ -86,6 +86,8 @@
   "block.offtheshelf.warped_bookcase": "Warped Bookcase",
   "block.offtheshelf.warped_tiered_shelf": "Warped Tiered Shelf",
   "block.offtheshelf.warped_wall_shelf": "Warped Wall Shelf",
+  "commands.shelf.clear": "%d shelves cleared",
+  "commands.shelf.loot": "%d shelves populated with loot",
   "commands.shelf.mode": "Set %d shelves to %s",
   "creativeTab.offtheshelf": "Off The Shelf"
 }

@@ -74,8 +74,12 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
             ItemStack previousStack = blockEntity.getItem(slot);
             boolean same = ItemStack.isSameItem(stack, previousStack) && ItemStack.isSameItemSameComponents(stack, previousStack);
 
-            if((!blockEntity.canPlaceItem(slot, stack) && !same) || blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE)
-                return InteractionResult.TRY_WITH_EMPTY_HAND;
+            if((!blockEntity.canPlaceItem(slot, stack) && !same) || blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE) {
+                if(blockEntity.getItem(slot).isEmpty())
+                    return InteractionResult.PASS;
+                else
+                    return InteractionResult.TRY_WITH_EMPTY_HAND;
+            }
 
             if(!level.isClientSide()) {
                 int maxCount = Math.min(this.getMaxCount(), stack.getMaxStackSize());

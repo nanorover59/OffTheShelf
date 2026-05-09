@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:generic",
+  "pools": [
+    {
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "conditions": [],
+          "functions": [
+            {
+              "function": "minecraft:set_random_dyes",
+              "number_of_dyes": 1
+            }
+          ]
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:constant",
+        "value": 16
+      },
+      "functions": []
+    }
+  ],
+  "functions": [],
+  "random_sequence": "offtheshelf:books/random"
+}

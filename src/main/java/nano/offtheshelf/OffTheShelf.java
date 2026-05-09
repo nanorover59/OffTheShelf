@@ -4,15 +4,11 @@ import nano.offtheshelf.block.BookcaseBlock;
 import nano.offtheshelf.block.TieredShelfBlock;
 import nano.offtheshelf.block.WallShelfBlock;
 import nano.offtheshelf.block.entity.BookcaseBlockEntity;
-import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
 import nano.offtheshelf.block.entity.TieredShelfBlockEntity;
 import nano.offtheshelf.block.entity.WallShelfBlockEntity;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -85,17 +81,7 @@ public class OffTheShelf implements ModInitializer {
         TIERED_SHELF_BLOCK_ENTITY = registerBlockEntity("tiered_shelf", TieredShelfBlockEntity::new, TIERED_SHELVING.toArray(new Block[0]));
         WALL_SHELF_BLOCK_ENTITY = registerBlockEntity("wall_shelf", WallShelfBlockEntity::new, WALL_SHELVING.toArray(new Block[0]));
 
-        CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) ->
-                dispatcher.register(Commands.literal("shelf").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .then(Commands.argument("from", BlockPosArgument.blockPos())
-                                .then(Commands.argument("to", BlockPosArgument.blockPos())
-                                        .then(Commands.literal("mode")
-                                                .then(Commands.literal("normal").executes(context ->
-                                                OffTheShelfBlockEntity.setMode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to"), OffTheShelfBlockEntity.NORMAL)))
-                                                .then(Commands.literal("locked").executes(context ->
-                                                OffTheShelfBlockEntity.setMode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to"), OffTheShelfBlockEntity.LOCKED)))
-                                                .then(Commands.literal("adventure").executes(context ->
-                                                OffTheShelfBlockEntity.setMode(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to"), OffTheShelfBlockEntity.ADVENTURE)))))))));
+        OffTheShelfCommands.register();
     }
 
     private static void registerShelving(String name, Block baseBlock) {
