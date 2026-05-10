@@ -21,7 +21,11 @@ public class OffTheShelfEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add("creativeTab.offtheshelf", "Off The Shelf");
         translationBuilder.add("commands.shelf.mode", "Set %d shelves to %s");
         translationBuilder.add("commands.shelf.loot", "%d shelves populated with loot");
+        translationBuilder.add("commands.shelf.scatter", "Scattered %d items amongst %d shelves");
         translationBuilder.add("commands.shelf.clear", "%d shelves cleared");
+        translationBuilder.add("commands.shelf.none", "No shelf blocks found");
+        translationBuilder.add("commands.shelf.source", "No source container found");
+        translationBuilder.add("commands.shelf.empty", "No items to scatter");
     }
 
     /**

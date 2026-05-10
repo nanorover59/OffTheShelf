@@ -26,12 +26,20 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.ColorRGBA;
+import net.minecraft.util.CommonColors;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.WrittenBookContent;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -89,8 +97,19 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
                 bookRenderState.bookColor = DyedItemColor.getOrDefault(itemStack, -6265536);
                 state.books[i] = bookRenderState;
 
-                if(state.highlight == i)
-                    state.name = itemStack.getStyledHoverName();
+                if(state.highlight == i) {
+                    if(itemStack.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
+                        WrittenBookContent bookContent = itemStack.get(DataComponents.WRITTEN_BOOK_CONTENT);
+                        state.name = Component.literal(bookContent.title().raw());
+                        state.author = Component.literal("by " + bookContent.author());
+                    } else if(itemStack.has(DataComponents.STORED_ENCHANTMENTS)) {
+                        ItemEnchantments enchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
+                        Holder<Enchantment> holder = enchantments.keySet().stream().findFirst().orElse(null);
+
+                        if(holder != null)
+                            state.name = Component.literal(holder.value().description().getString()).withColor(CommonColors.HIGH_CONTRAST_DIAMOND);
+                    }
+                }
             }
             else
                 state.books[i] = null;
@@ -147,18 +166,37 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
                 matrices.pushPose();
                 matrices.translate(0.0625f, 0.125f, 0.0f);
                 matrices.scale(-0.0125f, -0.0125f, -0.0125f);
-                float nameWidth = this.font.width(state.name);
-                queue.submitText(
-                        matrices,
-                        -nameWidth * 0.5f, -7.5f,
-                        state.name.getVisualOrderText(),
-                        true,
-                        Font.DisplayMode.SEE_THROUGH,
-                        state.lightCoords,
-                        0xffffffff,
-                        0,
-                        0
-                );
+
+                if(state.name != null) {
+                    float nameWidth = this.font.width(state.name);
+                    queue.submitText(
+                            matrices,
+                            -nameWidth * 0.5f, -15.0f,
+                            state.name.getVisualOrderText(),
+                            true,
+                            Font.DisplayMode.SEE_THROUGH,
+                            state.lightCoords,
+                            0xffffffff,
+                            0,
+                            0
+                    );
+                }
+
+                if(state.author != null) {
+                    float authorWidth = this.font.width(state.author);
+                    queue.submitText(
+                            matrices,
+                            -authorWidth * 0.5f, -2.0f,
+                            state.author.getVisualOrderText(),
+                            true,
+                            Font.DisplayMode.SEE_THROUGH,
+                            state.lightCoords,
+                            0xffffffff,
+                            0,
+                            0
+                    );
+                }
+
                 matrices.popPose();
             }
 

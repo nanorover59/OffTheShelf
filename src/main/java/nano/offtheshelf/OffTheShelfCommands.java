@@ -123,10 +123,15 @@ public class OffTheShelfCommands {
                 if(!stack.isEmpty())
                     toScatter.add(stack);
             }
+        } else {
+            source.sendSuccess(() -> Component.translatable("commands.shelf.source"), false);
+            return 0;
         }
 
-        if(toScatter.isEmpty())
+        if(toScatter.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("commands.shelf.empty"), false);
             return 0;
+        }
 
         List<BlockPos> posList = new ArrayList<>();
 
@@ -135,8 +140,10 @@ public class OffTheShelfCommands {
                 posList.add(new BlockPos(pos));
         }
 
-        if(posList.isEmpty())
+        if(posList.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("commands.shelf.none"), false);
             return 0;
+        }
 
         Collections.shuffle(posList);
         List<Tuple<BlockPos, Integer>> slotList = new ArrayList<>();
@@ -150,6 +157,7 @@ public class OffTheShelfCommands {
         }
 
         Collections.shuffle(slotList);
+        int itemCount = 0;
 
         for(Tuple<BlockPos, Integer> slot : slotList) {
             if(toScatter.isEmpty())
@@ -160,9 +168,13 @@ public class OffTheShelfCommands {
             if(level.getBlockEntity(slot.getA()) instanceof OffTheShelfBlockEntity shelfBlockEntity) {
                 shelfBlockEntity.setItem(slot.getB(), stack);
                 shelfBlockEntity.setChanged();
+                itemCount++;
             }
         }
 
+        int finalItemCount = itemCount;
+        int finalShelfCount = posList.size();
+        source.sendSuccess(() -> Component.translatable("commands.shelf.scatter", finalItemCount, finalShelfCount), false);
         return 1;
     }
 

@@ -87,7 +87,11 @@
   "block.offtheshelf.warped_tiered_shelf": "Warped Tiered Shelf",
   "block.offtheshelf.warped_wall_shelf": "Warped Wall Shelf",
   "commands.shelf.clear": "%d shelves cleared",
+  "commands.shelf.empty": "No items to scatter",
   "commands.shelf.loot": "%d shelves populated with loot",
   "commands.shelf.mode": "Set %d shelves to %s",
+  "commands.shelf.none": "No shelf blocks found",
+  "commands.shelf.scatter": "Scattered %d items amongst %d shelves",
+  "commands.shelf.source": "No source container found",
   "creativeTab.offtheshelf": "Off The Shelf"
 }

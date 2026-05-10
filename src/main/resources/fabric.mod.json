@@ -3,9 +3,13 @@
   "id": "offtheshelf",
   "version": "${version}",
   "name": "OffTheShelf",
-  "description": "",
+  "description": "A mod about shelving",
   "authors": [],
-  "contact": {},
+  "contact": {
+    "homepage": "https://modrinth.com/mod/off-the-shelf",
+    "sources": "https://github.com/nanorover59/OffTheShelf",
+    "issues": "https://github.com/nanorover59/OffTheShelf/issues"
+  },
   "license": "MIT",
   "icon": "assets/offtheshelf/icon.png",
   "environment": "*",

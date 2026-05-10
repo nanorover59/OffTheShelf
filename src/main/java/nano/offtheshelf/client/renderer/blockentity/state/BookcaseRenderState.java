@@ -10,4 +10,5 @@ public class BookcaseRenderState extends BlockEntityRenderState {
     public int model = 0;
     public int highlight = -1;
     public Component name = null;
+    public Component author = null;
 }
