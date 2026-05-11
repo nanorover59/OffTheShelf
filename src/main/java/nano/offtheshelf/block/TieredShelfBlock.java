@@ -59,10 +59,4 @@ public class TieredShelfBlock extends ModularShelfBlock {
         Vec2 vec = optionalVec.get();
         return Mth.floor(vec.x * columns) * 2 + (vec.y > 0.5f ? 1 : 0);
     }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, OffTheShelf.TIERED_SHELF_BLOCK_ENTITY, OffTheShelfBlockEntity::tick);
-    }
 }

@@ -91,10 +91,4 @@ public class WallShelfBlock extends ModularShelfBlock {
 
         return -1;
     }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, OffTheShelf.WALL_SHELF_BLOCK_ENTITY, OffTheShelfBlockEntity::tick);
-    }
 }

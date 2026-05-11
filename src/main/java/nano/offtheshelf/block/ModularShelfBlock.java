@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -173,6 +174,14 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
     @Override
     protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos, final Block block, @Nullable final Orientation orientation, final boolean movedByPiston) {
         updateConnection(level, state, pos);
+    }
+
+    @Override
+    protected void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource random) {
+        if(level.getBlockEntity(pos) instanceof OffTheShelfBlockEntity blockEntity
+                && blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE
+                && blockEntity.tickCooldown())
+            level.scheduleTick(pos, this, 1);
     }
 
     private void updateConnection(Level level, BlockState state, BlockPos pos) {

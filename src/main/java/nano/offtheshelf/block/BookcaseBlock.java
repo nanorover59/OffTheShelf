@@ -95,9 +95,9 @@ public class BookcaseBlock extends ModularShelfBlock {
         return Mth.floor(x * columns) * 2 + (vec.y > 0.5f ? 1 : 0);
     }
 
-    @Nullable
+    /*@Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide() ? null : createTickerHelper(type, OffTheShelf.BOOKCASE_BLOCK_ENTITY, OffTheShelfBlockEntity::tick);
-    }
+    }*/
 }

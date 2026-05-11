@@ -11,7 +11,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -83,6 +82,7 @@ public abstract class OffTheShelfBlockEntity extends BlockEntity implements List
     public void setCooldown(int slot, int cooldown) {
         this.cooldowns[slot] = cooldown;
         this.setChanged();
+        this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 1);
     }
 
     public void resetCooldowns() {
@@ -91,6 +91,22 @@ public abstract class OffTheShelfBlockEntity extends BlockEntity implements List
 
     public int getCooldown(int slot) {
         return this.cooldowns[slot];
+    }
+
+    public boolean tickCooldown() {
+        boolean hasCooldown = false;
+
+        for(int i = 0; i < this.getInventorySize(); i++) {
+            if(this.cooldowns[i] > 0) {
+                hasCooldown = true;
+                this.cooldowns[i]--;
+
+                if(this.cooldowns[i] == 0)
+                    this.setChanged();
+            }
+        }
+
+        return hasCooldown;
     }
 
     @Override
@@ -135,19 +151,5 @@ public abstract class OffTheShelfBlockEntity extends BlockEntity implements List
         ContainerHelper.saveAllItems(output, this.items, true);
         output.putInt("mode", this.mode);
         output.putIntArray("cooldowns", this.cooldowns);
-    }
-
-    public static void tick(Level level, BlockPos blockPos, BlockState blockState, OffTheShelfBlockEntity blockEntity) {
-        if(blockEntity.mode != ADVENTURE)
-            return;
-
-        for(int i = 0; i < blockEntity.getInventorySize(); i++) {
-            if(blockEntity.cooldowns[i] > 0) {
-                blockEntity.cooldowns[i]--;
-
-                if(blockEntity.cooldowns[i] == 0)
-                    blockEntity.setChanged();
-            }
-        }
     }
 }
