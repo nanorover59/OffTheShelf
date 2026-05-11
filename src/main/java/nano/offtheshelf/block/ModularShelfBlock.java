@@ -118,7 +118,7 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
                 ItemStack retrieved = blockEntity.getItem(slot).copy();
 
                 if(blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE)
-                    blockEntity.setCooldown(slot, 20);
+                    blockEntity.setCooldown(slot, 2);
                 else
                     blockEntity.removeItem(slot, blockEntity.getItem(slot).getCount());
 
@@ -181,7 +181,7 @@ public abstract class ModularShelfBlock extends BaseEntityBlock {
         if(level.getBlockEntity(pos) instanceof OffTheShelfBlockEntity blockEntity
                 && blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE
                 && blockEntity.tickCooldown())
-            level.scheduleTick(pos, this, 1);
+            level.scheduleTick(pos, this, 20);
     }
 
     private void updateConnection(Level level, BlockState state, BlockPos pos) {
