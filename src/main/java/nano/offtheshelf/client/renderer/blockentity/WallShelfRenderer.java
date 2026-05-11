@@ -43,10 +43,21 @@ public class WallShelfRenderer implements BlockEntityRenderer<WallShelfBlockEnti
     @Override
     public void extractRenderState(WallShelfBlockEntity blockEntity, WallShelfRenderState state, final float partialTicks, final Vec3 cameraPos, @Nullable final ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPos, breakProgress);
+        Minecraft client = Minecraft.getInstance();
+
+        // Optimization!
+        if(client.player != null) {
+            Vec3 viewVec = client.player.getViewVector(partialTicks);
+            Vec3 diffVec = client.player.getEyePosition(partialTicks).subtract(blockEntity.getBlockPos().getCenter()).normalize();
+
+            if(diffVec.dot(viewVec) > 0)
+                return;
+        } else
+            return;
+
         state.direction = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING);
         state.bottom = blockEntity.getBlockState().getValue(WallShelfBlock.BOTTOM);
         NonNullList<ItemStack> items = blockEntity.getItems();
-        Minecraft client = Minecraft.getInstance();
         int seed = HashCommon.long2int(blockEntity.getBlockPos().asLong());
 
         if(client.hitResult != null && client.hitResult instanceof BlockHitResult) {

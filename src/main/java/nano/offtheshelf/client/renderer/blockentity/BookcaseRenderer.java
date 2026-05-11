@@ -32,7 +32,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -68,10 +67,22 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
     @Override
     public void extractRenderState(BookcaseBlockEntity blockEntity, BookcaseRenderState state, float partialTicks, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPos, breakProgress);
-        state.direction = blockEntity.getBlockState().getValue(BookcaseBlock.FACING);
-        state.model = blockEntity.getBlockState().getValue(BookcaseBlock.MODEL);
-        NonNullList<ItemStack> items = blockEntity.getItems();
         Minecraft client = Minecraft.getInstance();
+
+        // Optimization!
+        if(client.player != null) {
+            Vec3 viewVec = client.player.getViewVector(partialTicks);
+            Vec3 shelfVec = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING).getUnitVec3();
+            Vec3 diffVec = client.player.getEyePosition(partialTicks).subtract(blockEntity.getBlockPos().getCenter()).normalize();
+
+            if(diffVec.dot(shelfVec) < 0 || diffVec.dot(viewVec) > 0)
+                return;
+        } else
+            return;
+
+        state.direction = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING);
+        state.model = blockEntity.getBlockState().getValue(ModularShelfBlock.MODEL);
+        NonNullList<ItemStack> items = blockEntity.getItems();
         RandomSource random = new LegacyRandomSource(blockEntity.getBlockPos().asLong());
         int[] variant = new int[16];
 
