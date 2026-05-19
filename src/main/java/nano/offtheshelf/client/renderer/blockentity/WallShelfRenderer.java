@@ -5,8 +5,10 @@ import it.unimi.dsi.fastutil.HashCommon;
 import nano.offtheshelf.block.ModularShelfBlock;
 import nano.offtheshelf.block.WallShelfBlock;
 import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
+import nano.offtheshelf.block.entity.TieredShelfBlockEntity;
 import nano.offtheshelf.block.entity.WallShelfBlockEntity;
 import nano.offtheshelf.client.renderer.blockentity.state.WallShelfRenderState;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -41,19 +43,21 @@ public class WallShelfRenderer implements BlockEntityRenderer<WallShelfBlockEnti
     }
 
     @Override
+    public boolean shouldRender(WallShelfBlockEntity blockEntity, Vec3 cameraPosition) {
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 viewVec = new Vec3(camera.forwardVector());
+        Vec3 diffVec = cameraPosition.subtract(blockEntity.getBlockPos().getCenter()).normalize();
+
+        if(diffVec.dot(viewVec) > 0)
+            return false;
+
+        return BlockEntityRenderer.super.shouldRender(blockEntity, cameraPosition);
+    }
+
+    @Override
     public void extractRenderState(WallShelfBlockEntity blockEntity, WallShelfRenderState state, final float partialTicks, final Vec3 cameraPos, @Nullable final ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPos, breakProgress);
         Minecraft client = Minecraft.getInstance();
-
-        // Optimization!
-        if(client.player != null) {
-            Vec3 viewVec = client.player.getViewVector(partialTicks);
-            Vec3 diffVec = client.player.getEyePosition(partialTicks).subtract(blockEntity.getBlockPos().getCenter()).normalize();
-
-            if(diffVec.dot(viewVec) > 0)
-                return;
-        } else
-            return;
 
         state.direction = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING);
         state.bottom = blockEntity.getBlockState().getValue(WallShelfBlock.BOTTOM);

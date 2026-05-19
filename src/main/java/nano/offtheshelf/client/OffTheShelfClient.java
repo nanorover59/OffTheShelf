@@ -12,10 +12,12 @@ import net.minecraft.resources.Identifier;
 
 public class OffTheShelfClient implements ClientModInitializer {
     public static final ModelLayerLocation BOOK_LAYER = mainLayer("book");
+    public static final ModelLayerLocation BOOK_LAYER_FLAT = mainLayer("book_flat");
 
     @Override
     public void onInitializeClient() {
         ModelLayerRegistry.registerModelLayer(BOOK_LAYER, BookcaseRenderer::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BOOK_LAYER_FLAT, BookcaseRenderer::getTexturedModelDataFlat);
         BlockEntityRenderers.register(OffTheShelf.BOOKCASE_BLOCK_ENTITY, BookcaseRenderer::new);
         BlockEntityRenderers.register(OffTheShelf.TIERED_SHELF_BLOCK_ENTITY, TieredShelfRenderer::new);
         BlockEntityRenderers.register(OffTheShelf.WALL_SHELF_BLOCK_ENTITY, WallShelfRenderer::new);

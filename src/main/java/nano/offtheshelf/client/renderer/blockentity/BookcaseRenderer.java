@@ -8,8 +8,8 @@ import nano.offtheshelf.block.ModularShelfBlock;
 import nano.offtheshelf.block.entity.BookcaseBlockEntity;
 import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
 import nano.offtheshelf.client.OffTheShelfClient;
-import nano.offtheshelf.client.renderer.blockentity.state.BookRenderState;
 import nano.offtheshelf.client.renderer.blockentity.state.BookcaseRenderState;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.ModelPart;
@@ -33,16 +33,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity, BookcaseRenderState> {
     public static final SpriteId BOOK_TEXTURE_0 = Sheets.BLOCKS_MAPPER.apply(Identifier.fromNamespaceAndPath(OffTheShelf.MOD_ID, "book0"));
@@ -52,11 +52,26 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
     private final SpriteGetter sprites;
     private final Font font;
     private final ModelPart book;
+    private final ModelPart bookFlat;
 
     public BookcaseRenderer(BlockEntityRendererProvider.Context context) {
         this.sprites = context.sprites();
         this.font = context.font();
         this.book = context.bakeLayer(OffTheShelfClient.BOOK_LAYER);
+        this.bookFlat = context.bakeLayer(OffTheShelfClient.BOOK_LAYER_FLAT);
+    }
+
+    @Override
+    public boolean shouldRender(BookcaseBlockEntity blockEntity, Vec3 cameraPosition) {
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 viewVec = new Vec3(camera.forwardVector());
+        Vec3 shelfVec = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING).getUnitVec3();
+        Vec3 diffVec = cameraPosition.subtract(blockEntity.getBlockPos().getCenter()).normalize();
+
+        if(diffVec.dot(shelfVec) < 0 || diffVec.dot(viewVec) > 0)
+            return false;
+
+        return BlockEntityRenderer.super.shouldRender(blockEntity, cameraPosition);
     }
 
     @Override
@@ -69,46 +84,22 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPos, breakProgress);
         Minecraft client = Minecraft.getInstance();
 
-        // Optimization!
-        if(client.player != null) {
-            Vec3 viewVec = client.player.getViewVector(partialTicks);
-            Vec3 shelfVec = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING).getUnitVec3();
-            Vec3 diffVec = client.player.getEyePosition(partialTicks).subtract(blockEntity.getBlockPos().getCenter()).normalize();
-
-            if(diffVec.dot(shelfVec) < 0 || diffVec.dot(viewVec) > 0)
-                return;
-        } else
-            return;
-
         state.direction = blockEntity.getBlockState().getValue(ModularShelfBlock.FACING);
         state.model = blockEntity.getBlockState().getValue(ModularShelfBlock.MODEL);
-        NonNullList<ItemStack> items = blockEntity.getItems();
-        RandomSource random = new LegacyRandomSource(blockEntity.getBlockPos().asLong());
-        int[] variant = new int[16];
+        state.variants = blockEntity.variants;
+        state.colors = blockEntity.colors;
+        state.flatten = blockEntity.flatten;
 
-        for(int i = 0; i < 16; i++)
-            variant[i] = random.nextInt(5);
-
-        if(client.hitResult != null && client.hitResult instanceof BlockHitResult) {
+        if(client.hitResult != null && client.hitResult instanceof BlockHitResult && blockEntity.getMode() != OffTheShelfBlockEntity.LOCKED) {
             BlockHitResult blockHitResult = (BlockHitResult) client.hitResult;
 
-            if(blockHitResult.getBlockPos().equals(blockEntity.getBlockPos()) && blockEntity.getMode() != OffTheShelfBlockEntity.LOCKED)
+            if(blockHitResult.getBlockPos().equals(blockEntity.getBlockPos())) {
                 state.highlight = ((ModularShelfBlock) blockEntity.getBlockState().getBlock()).getInteractionSlot(blockEntity.getBlockState(), blockHitResult);
-        }
 
-        for(int i = 0; i < 16; i++) {
-            if(blockEntity.getMode() == OffTheShelfBlockEntity.ADVENTURE && blockEntity.getCooldown(i) > 0)
-                continue;
+                if(state.highlight > -1) {
+                    NonNullList<ItemStack> items = blockEntity.getItems();
+                    ItemStack itemStack = items.get(state.highlight);
 
-            ItemStack itemStack = items.get(i);
-
-            if(!itemStack.isEmpty()) {
-                BookRenderState bookRenderState = new BookRenderState();
-                bookRenderState.bookType = variant[i];
-                bookRenderState.bookColor = DyedItemColor.getOrDefault(itemStack, -6265536);
-                state.books[i] = bookRenderState;
-
-                if(state.highlight == i) {
                     if(itemStack.has(DataComponents.WRITTEN_BOOK_CONTENT)) {
                         WrittenBookContent bookContent = itemStack.get(DataComponents.WRITTEN_BOOK_CONTENT);
                         state.name = Component.literal(bookContent.title().raw());
@@ -122,18 +113,19 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
                     }
                 }
             }
-            else
-                state.books[i] = null;
         }
     }
 
     @Override
     public void submit(BookcaseRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState camera) {
+        if(state.variants == null || state.colors == null)
+            return;
+
         Direction direction = state.direction;
         int size = state.model == BookcaseBlock.CENTER ? 16 : 14;
 
         for(int i = 0; i < size; i++) {
-            if(state.books[i] == null)
+            if(state.variants[i] < 0)
                 continue;
 
             double x = (double) ((i / 2) + 1) * 0.125 + 0.0625;
@@ -153,8 +145,8 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
                 default -> Vec3.ZERO;
             };
 
-            SpriteId texture = this.getTextureLocation(state.books[i].bookType);
-            int color = state.books[i].bookColor;
+            SpriteId texture = this.getTextureLocation(state.variants[i]);
+            int color = state.colors[i];
 
             if(state.highlight == i)
                 color = ARGB.average(color, ARGB.white(1.0f));
@@ -163,7 +155,7 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
             matrices.translate(vec);
             matrices.mulPose(Axis.YP.rotationDegrees(-direction.getOpposite().toYRot()));
             queue.submitModelPart(
-                    this.book,
+                    state.flatten[i] ? this.bookFlat : this.book,
                     matrices,
                     texture.renderType(RenderTypes::entitySolid),
                     state.lightCoords,
@@ -228,6 +220,13 @@ public class BookcaseRenderer implements BlockEntityRenderer<BookcaseBlockEntity
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         root.addOrReplaceChild("book", CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 2.0F, 6.0F, 5.0F).mirror(), PartPose.ZERO);
+        return LayerDefinition.create(mesh, 16, 16);
+    }
+
+    public static LayerDefinition getTexturedModelDataFlat() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild("book", CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 2.0F, 6.0F, 5.0F, Set.of(Direction.NORTH)).mirror(), PartPose.ZERO);
         return LayerDefinition.create(mesh, 16, 16);
     }
 }

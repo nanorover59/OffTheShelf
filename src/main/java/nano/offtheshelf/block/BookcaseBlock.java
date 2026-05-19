@@ -1,38 +1,22 @@
 package nano.offtheshelf.block;
 
 import com.mojang.serialization.MapCodec;
-import nano.offtheshelf.OffTheShelf;
 import nano.offtheshelf.block.entity.BookcaseBlockEntity;
-import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
@@ -80,6 +64,17 @@ public class BookcaseBlock extends ModularShelfBlock {
     }
 
     @Override
+    protected void neighborChanged(final BlockState state, final Level level, final BlockPos pos, final Block block, @Nullable final Orientation orientation, final boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
+
+        // Track whether the end slots of neighbor bookcases are empty.
+        if(level.getBlockEntity(pos) instanceof BookcaseBlockEntity blockEntity) {
+            blockEntity.checkLeftNeighbor();
+            blockEntity.checkRightNeighbor();
+        }
+    }
+
+    @Override
     public int getInteractionSlot(BlockState state, BlockHitResult hitResult) {
         Optional<Vec2> optionalVec = getInteractionVec2(hitResult);
 
@@ -94,10 +89,4 @@ public class BookcaseBlock extends ModularShelfBlock {
         float x = Mth.map(Mth.clamp(vec.x, minX, maxX), minX, maxX, 0.0f, 0.99f);
         return Mth.floor(x * columns) * 2 + (vec.y > 0.5f ? 1 : 0);
     }
-
-    /*@Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, OffTheShelf.BOOKCASE_BLOCK_ENTITY, OffTheShelfBlockEntity::tick);
-    }*/
 }
