@@ -82,7 +82,7 @@ public abstract class OffTheShelfBlockEntity extends BlockEntity implements List
     public void setCooldown(int slot, int cooldown) {
         this.cooldowns[slot] = cooldown;
         this.setChanged();
-        this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 1);
+        this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 20);
     }
 
     public void resetCooldowns() {
@@ -98,11 +98,12 @@ public abstract class OffTheShelfBlockEntity extends BlockEntity implements List
 
         for(int i = 0; i < this.getInventorySize(); i++) {
             if(this.cooldowns[i] > 0) {
-                hasCooldown = true;
                 this.cooldowns[i]--;
 
                 if(this.cooldowns[i] == 0)
                     this.setChanged();
+                else
+                    hasCooldown = true;
             }
         }
 
