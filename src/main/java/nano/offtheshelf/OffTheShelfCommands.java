@@ -1,5 +1,7 @@
 package nano.offtheshelf;
 
+import nano.offtheshelf.block.ModularShelfBlock;
+import nano.offtheshelf.block.entity.BookcaseBlockEntity;
 import nano.offtheshelf.block.entity.OffTheShelfBlockEntity;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
@@ -83,7 +85,7 @@ public class OffTheShelfCommands {
                         .withParameter(LootContextParams.ORIGIN, source.getPosition())
                         .create(LootContextParamSets.COMMAND);
                 List<ItemStack> loot = lootTable.value().getRandomItems(lootParams);
-                List<Integer> slots = IntStream.range(0, blockEntity.getItems().size()).boxed().collect(Collectors.toList());
+                List<Integer> slots = IntStream.range(0, inventorySize(blockEntity)).boxed().collect(Collectors.toList());
                 Collections.shuffle(slots);
 
                 for(int slot : slots) {
@@ -151,7 +153,7 @@ public class OffTheShelfCommands {
 
         for(int i = 0; i < slotCount; i++) {
             if(level.getBlockEntity(posList.get(i)) instanceof OffTheShelfBlockEntity shelfBlockEntity) {
-                for(int j = 0; j < shelfBlockEntity.getInventorySize(); j++)
+                for(int j = 0; j < inventorySize(shelfBlockEntity); j++)
                     slotList.add(new Tuple<>(posList.get(i), j));
             }
         }
@@ -194,5 +196,12 @@ public class OffTheShelfCommands {
         int finalCount = count;
         source.sendSuccess(() -> Component.translatable("commands.shelf.clear", finalCount), false);
         return 1;
+    }
+
+    private static int inventorySize(OffTheShelfBlockEntity blockEntity) {
+        if(blockEntity instanceof BookcaseBlockEntity bookcaseBlockEntity)
+            return bookcaseBlockEntity.getBlockState().getValue(ModularShelfBlock.MODEL) == ModularShelfBlock.CENTER ? 16 : 14;
+        else
+            return blockEntity.getInventorySize();
     }
 }
